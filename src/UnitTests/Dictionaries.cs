@@ -464,5 +464,42 @@ namespace AutoMapper.UnitTests
 				_result.Values["Key2"].ShouldEqual("Value2");
 			}
 		}
+
+		public class when_mapping_from_a_generic_dictionary_to_an_object : SpecBase
+		{
+			private FooObject _result;
+
+			public class FooObject
+			{
+				public string Name { get; set; }
+				public int Age { get; set; }
+				public DateTime BirthDate { get; set; }
+			}
+
+			protected override void Establish_context()
+			{
+				Mapper.CreateMap<IDictionary, FooObject>();
+			}
+
+			protected override void Because_of()
+			{
+				var source = new Dictionary<string, object>
+				{
+					{"Name", "Paul Yoder"},
+					{"Age", 28},
+					{"BirthDate", new DateTime(1983, 2, 29)}
+				};
+
+				_result = Mapper.Map<IDictionary, FooObject>(source);
+			}
+
+			[Test]
+			public void Should_perform_mapping_to_object_properties()
+			{
+				_result.Name.ShouldEqual("Paul Yoder");
+				_result.Age.ShouldEqual(29);
+				_result.BirthDate.ShouldEqual(new DateTime(1983, 2, 29));
+			}
+		}
 	}
 }
